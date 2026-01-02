@@ -7,6 +7,7 @@ import SimilarityMatrix from '../components/visualization/SimilarityMatrix';
 import PerformanceRadar from '../components/visualization/PerformanceRadar';
 import WordCloud from '../components/visualization/WordCloud';
 import HistorySidebar from '../components/history/HistorySidebar';
+import ScoringGuide from '../components/help/ScoringGuide';
 import { promptsAPI } from '../services/api';
 import { exportToJSON, exportToCSV, exportToPDF } from '../services/exportService';
 
@@ -71,6 +72,9 @@ function Home() {
             Compare responses from multiple AI models and analyze their performance
           </p>
         </div>
+
+        {/* Scientific Scoring Guide */}
+        <ScoringGuide />
 
         <PromptInput onSubmit={handleSubmit} loading={loading} />
       </section>
@@ -188,6 +192,7 @@ function Home() {
                     key={response.id || index}
                     response={response}
                     isFirst={index === 0}
+                    promptText={results.prompt?.promptText}
                   />
                 ))}
               </div>

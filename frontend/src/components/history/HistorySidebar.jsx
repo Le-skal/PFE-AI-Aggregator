@@ -104,6 +104,22 @@ const HistorySidebar = ({ refreshTrigger = 0 }) => {
               {truncateText(prompt.promptText)}
             </p>
 
+            {/* Winner Badge */}
+            {prompt.summary?.bestResponse && (
+              <div className="bg-ink-900 text-sand-50 p-2 rounded mb-2">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] text-sand-400">WINNER</p>
+                    <p className="text-xs font-semibold">{prompt.summary.bestResponse.model}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold">{prompt.summary.bestResponse.compositeScore}</p>
+                    <p className="text-[9px] text-sand-400">/100</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Models */}
             <div className="flex flex-wrap gap-1 mb-2">
               {prompt.aiModels?.slice(0, 3).map((model) => (

@@ -1,8 +1,13 @@
 import natural from 'natural';
 import compromise from 'compromise';
+import { removeStopwords, eng } from 'stopword';
 
 /**
  * Service d'analyse NLP (Natural Language Processing)
+ * Utilise des méthodes scientifiquement validées:
+ * - TF-IDF pour la vectorisation
+ * - Cosine Similarity pour la comparaison sémantique
+ * - BM25 pour le ranking (implémenté dans scoringService)
  */
 class NLPService {
   constructor() {
@@ -15,6 +20,10 @@ class NLPService {
       natural.PorterStemmer,
       'afinn'
     );
+
+    // TF-IDF pour vectorisation
+    this.TfIdf = natural.TfIdf;
+    this.tfidf = new this.TfIdf();
   }
 
   /**
@@ -181,23 +190,122 @@ class NLPService {
 
   /**
    * Compare la similarité entre deux textes
+   * Utilise Cosine Similarity avec TF-IDF (méthode scientifiquement validée)
+   * Référence: Salton & McGill (1983), "Introduction to Modern Information Retrieval"
    * @param {string} text1
    * @param {string} text2
    * @returns {number} - Score de similarité (0-1)
    */
   calculateSimilarity(text1, text2) {
     try {
-      const tokens1 = new Set(this.tokenizer.tokenize(text1.toLowerCase()));
-      const tokens2 = new Set(this.tokenizer.tokenize(text2.toLowerCase()));
+      // Créer une instance TF-IDF pour cette comparaison
+      const tfidf = new this.TfIdf();
+      tfidf.addDocument(text1);
+      tfidf.addDocument(text2);
 
-      // Coefficient de Jaccard
-      const intersection = new Set([...tokens1].filter(x => tokens2.has(x)));
-      const union = new Set([...tokens1, ...tokens2]);
+      // Obtenir tous les termes uniques
+      const allTerms = new Set();
+      tfidf.listTerms(0).forEach(item => allTerms.add(item.term));
+      tfidf.listTerms(1).forEach(item => allTerms.add(item.term));
 
-      return intersection.size / union.size;
+      // Créer les vecteurs TF-IDF
+      const vector1 = [];
+      const vector2 = [];
+
+      allTerms.forEach(term => {
+        vector1.push(tfidf.tfidf(term, 0));
+        vector2.push(tfidf.tfidf(term, 1));
+      });
+
+      // Calculer la similarité cosinus
+      return this.cosineSimilarity(vector1, vector2);
     } catch (error) {
       console.error('Error calculating similarity:', error);
       return 0;
+    }
+  }
+
+  /**
+   * Calcule la similarité cosinus entre deux vecteurs
+   * Formule: cos(θ) = (A·B) / (||A|| × ||B||)
+   * @private
+   * @param {number[]} vectorA
+   * @param {number[]} vectorB
+   * @returns {number} - Similarité (0-1)
+   */
+  cosineSimilarity(vectorA, vectorB) {
+    if (vectorA.length !== vectorB.length) return 0;
+    if (vectorA.length === 0) return 0;
+
+    // Produit scalaire A·B
+    let dotProduct = 0;
+    let normA = 0;
+    let normB = 0;
+
+    for (let i = 0; i < vectorA.length; i++) {
+      dotProduct += vectorA[i] * vectorB[i];
+      normA += vectorA[i] * vectorA[i];
+      normB += vectorB[i] * vectorB[i];
+    }
+
+    // Éviter division par zéro
+    if (normA === 0 || normB === 0) return 0;
+
+    // Similarité cosinus
+    return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  }
+
+  /**
+   * Calcule le vecteur TF-IDF pour un texte
+   * Utile pour BM25 et autres métriques avancées
+   * @param {string} text
+   * @param {string[]} corpus - Corpus de documents pour IDF
+   * @returns {Map<string, number>} - Map terme -> score TF-IDF
+   */
+  calculateTfIdfVector(text, corpus = []) {
+    const tfidf = new this.TfIdf();
+
+    // Ajouter le corpus
+    corpus.forEach(doc => tfidf.addDocument(doc));
+    tfidf.addDocument(text);
+
+    const vector = new Map();
+    const docIndex = corpus.length;
+
+    tfidf.listTerms(docIndex).forEach(item => {
+      vector.set(item.term, item.tfidf);
+    });
+
+    return vector;
+  }
+
+  /**
+   * Prétraite un texte: tokenization, stopword removal, stemming
+   * @param {string} text
+   * @returns {string[]} - Tokens nettoyés
+   */
+  preprocessText(text) {
+    try {
+      // Tokenization
+      let tokens = this.tokenizer.tokenize(text.toLowerCase());
+
+      // Suppression des stopwords
+      tokens = removeStopwords(tokens, eng);
+
+      // Stemming (optionnel, améliore la précision)
+      const stemmer = natural.PorterStemmer;
+      tokens = tokens.map(token => stemmer.stem(token));
+
+      // Filtrer tokens invalides (garder tokens >= 2 caractères pour acronymes)
+      tokens = tokens.filter(token =>
+        token.length >= 2 &&  // Changé de > 2 à >= 2 pour garder AI, ML, etc.
+        /^[a-z0-9]+$/.test(token)  // Permet aussi les chiffres
+      );
+
+      return tokens;
+    } catch (error) {
+      console.error('Error preprocessing text:', error);
+      return [];
     }
   }
 }

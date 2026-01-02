@@ -3,6 +3,8 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { promptsAPI } from '../services/api';
 import useAuthStore from '../store/authStore';
 import { exportToJSON, exportToCSV, exportToPDF } from '../services/exportService';
+import ResponseCard from '../components/results/ResponseCard';
+import ComparisonSummary from '../components/results/ComparisonSummary';
 
 const History = () => {
   const { isAuthenticated } = useAuthStore();
@@ -171,6 +173,13 @@ const History = () => {
           </div>
         </div>
 
+        {/* Comparison Summary */}
+        {selectedPrompt.summary && (
+          <section className="mb-6">
+            <ComparisonSummary summary={selectedPrompt.summary} />
+          </section>
+        )}
+
         {/* Responses */}
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-ink-900">
@@ -178,55 +187,12 @@ const History = () => {
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {selectedPrompt.responses?.map((response, index) => (
-              <div key={response.id || index} className="card">
-                <div className="flex items-start justify-between mb-3">
-                  <h4 className="font-semibold text-ink-900 capitalize">
-                    {response.aiModel}
-                  </h4>
-                  <span
-                    className={`text-xs px-2 py-1 border ${
-                      response.status === 'success'
-                        ? 'bg-green-100 text-green-800 border-green-300'
-                        : 'bg-red-100 text-red-800 border-red-300'
-                    }`}
-                  >
-                    {response.status}
-                  </span>
-                </div>
-
-                {response.status === 'success' ? (
-                  <>
-                    <div className="text-sm text-ink-700 mb-4 line-clamp-4">
-                      {response.responseText}
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 text-xs border-t border-sand-300 pt-3">
-                      <div>
-                        <p className="text-ink-600">Relevance</p>
-                        <p className="font-semibold text-ink-900">
-                          {response.scores?.relevance || '-'}/100
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-ink-600">Similarity</p>
-                        <p className="font-semibold text-ink-900">
-                          {response.scores?.similarity || '-'}/100
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-ink-600">Sovereignty</p>
-                        <p className="font-semibold text-ink-900">
-                          {response.scores?.sovereignty?.score || '-'}/100
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-sm text-red-600">
-                    {response.error || 'Request failed'}
-                  </div>
-                )}
-              </div>
+              <ResponseCard
+                key={response.id || index}
+                response={response}
+                isFirst={index === 0}
+                promptText={selectedPrompt.prompt?.promptText}
+              />
             ))}
           </div>
         </div>

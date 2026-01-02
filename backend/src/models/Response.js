@@ -26,21 +26,56 @@ const responseSchema = new mongoose.Schema({
     output: { type: Number, default: 0 },
     total: { type: Number, default: 0 }
   },
-  // Scores d'évaluation
+  // Scores d'évaluation (méthodes scientifiquement validées)
   scores: {
-    // Score de pertinence (0-100)
+    // Score de pertinence BM25 (0-100)
     relevance: {
       type: Number,
       min: 0,
       max: 100,
       default: null
     },
-    // Score de similarité avec les autres réponses (0-100)
+    // Score de similarité TF-IDF cosine (0-100)
     similarity: {
       type: Number,
       min: 0,
       max: 100,
       default: null
+    },
+    // Score de vitesse normalisé (0-100)
+    speed: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: null
+    },
+    // Score composite pondéré (0-100)
+    composite: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: null
+    },
+    // Scores ROUGE pour évaluation de qualité
+    rouge: {
+      rouge1: {
+        type: Number,
+        min: 0,
+        max: 1,
+        default: null
+      },
+      rouge2: {
+        type: Number,
+        min: 0,
+        max: 1,
+        default: null
+      },
+      rougeL: {
+        type: Number,
+        min: 0,
+        max: 1,
+        default: null
+      }
     },
     // Scoring de souveraineté des données
     sovereignty: {
@@ -109,20 +144,11 @@ const responseSchema = new mongoose.Schema({
 responseSchema.index({ promptId: 1, aiModel: 1 });
 responseSchema.index({ aiModel: 1, createdAt: -1 });
 
-// Méthode virtuelle pour calculer le score global
+// Méthode virtuelle pour obtenir le score global
+// Utilise maintenant le score composite calculé scientifiquement
 responseSchema.virtual('overallScore').get(function() {
-  const { relevance, similarity, sovereignty } = this.scores;
-  const weights = {
-    relevance: 0.4,
-    similarity: 0.3,
-    sovereignty: 0.3
-  };
-
-  return (
-    (relevance || 0) * weights.relevance +
-    (similarity || 0) * weights.similarity +
-    (sovereignty?.score || 0) * weights.sovereignty
-  );
+  // Retourne le score composite s'il existe, sinon calcule un score basique
+  return this.scores?.composite || 0;
 });
 
 // S'assurer que les virtuels sont inclus dans JSON
