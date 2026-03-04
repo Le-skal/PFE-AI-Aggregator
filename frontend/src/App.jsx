@@ -19,10 +19,29 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-ink-900 border-t border-ink-700 mt-16">
-        <div className="container-custom py-6">
+        <div className="container-custom py-6 flex flex-col items-center gap-3">
           <p className="text-center text-sm text-sand-400">
-            PFE 2025-2026 · IT for Green & Data Sovereignty · Skills4Mind
+            PFE 2025-2026 · IT for Green & Data Sovereignty · DeepSkal
           </p>
+          <div className="flex items-center gap-6">
+            <a
+              href="https://github.com/Le-skal/Green-AI-Scanner"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-sand-500 hover:text-sand-300 transition-colors"
+            >
+              GitHub
+            </a>
+            <span className="text-ink-600">·</span>
+            <a
+              href="https://green-ai-scanner-production.up.railway.app/api-docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-sand-500 hover:text-sand-300 transition-colors"
+            >
+              API Docs (Swagger)
+            </a>
+          </div>
         </div>
       </footer>
     </div>

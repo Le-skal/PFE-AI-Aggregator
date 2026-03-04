@@ -37,7 +37,7 @@
 ---
 
 ### 📊 Projet de Fin d'Études 2025-2026
-**IT for Green & Data Sovereignty** | Skills4Mind | B3 Data & IA
+**IT for Green & Data Sovereignty** | DeepSkal | B3 Data & IA
 
 **[🌐 Live Demo](https://green-ai.deepskal.com/) · [📚 Maquettes Figma](https://www.figma.com/design/ErpgGc9MsR4MzDUZs28YrK/PFE?node-id=0-1&t=1zoBcZ5hSujxvZd5-1)**
 
@@ -635,7 +635,7 @@ ProjetFinale3/
 
 ## Documentation API
 
-**Documentation interactive Swagger**: [http://localhost:5000/api-docs](http://localhost:5000/api-docs)
+**Documentation interactive Swagger**: [https://green-ai-scanner-production.up.railway.app/api-docs](https://green-ai-scanner-production.up.railway.app/api-docs)
 
 L'API REST est entièrement documentée avec Swagger/OpenAPI. Vous pouvez tester tous les endpoints directement depuis l'interface Swagger.
 

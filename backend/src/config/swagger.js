@@ -9,14 +9,18 @@ const options = {
       description: 'API REST pour l\'agrégation et l\'analyse comparative de réponses IA multi-modèles avec scoring scientifique (BM25, TF-IDF, ROUGE) et évaluation de souveraineté des données.',
       contact: {
         name: 'PFE 2025-2026',
-        email: 'contact@Skills4Mind.com'
+        email: 'contact@DeepSkal.com'
       },
       license: {
         name: 'Confidential',
-        url: 'https://Skills4Mind.com'
+        url: 'https://DeepSkal.com'
       }
     },
     servers: [
+      {
+        url: 'https://green-ai-scanner-production.up.railway.app',
+        description: 'Serveur de production (Railway)'
+      },
       {
         url: 'http://localhost:5000',
         description: 'Serveur de développement'
