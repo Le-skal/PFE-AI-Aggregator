@@ -39,7 +39,7 @@
 ### 📊 Projet de Fin d'Études 2025-2026
 **IT for Green & Data Sovereignty** | Skills4Mind | B3 Data & IA
 
-**[🌐 Live Demo]([https://datakit.deepskal.com](https://green-ai.deepskal.com/)) · [📚 Maquettes Figma](https://www.figma.com/design/ErpgGc9MsR4MzDUZs28YrK/PFE?node-id=0-1&t=1zoBcZ5hSujxvZd5-1)**
+**[🌐 Live Demo](https://green-ai.deepskal.com/) · [📚 Maquettes Figma](https://www.figma.com/design/ErpgGc9MsR4MzDUZs28YrK/PFE?node-id=0-1&t=1zoBcZ5hSujxvZd5-1)**
 
 </div>
 
